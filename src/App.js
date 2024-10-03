@@ -19,7 +19,7 @@ function App() {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
+    <div className="bg-gray-900 min-h-screen text-white font-sans">
       {/* Üst Menü */}
       <nav className="bg-gray-800 p-4 flex items-center justify-between relative">
         {/* Sol İkon - Geri Dön */}
@@ -29,7 +29,7 @@ function App() {
           </button>
         </div>
         {/* Başlık */}
-        <div className="text-3xl font-extrabold flex-grow text-center md:text-left font-sans tracking-wider">
+        <div className="text-3xl font-extrabold flex-grow text-center md:text-left tracking-wider">
           <span className="text-yellow-500">Filmler</span> ve{' '}
           <span className="text-blue-500">Karakterler</span>
         </div>
@@ -40,7 +40,7 @@ function App() {
           </button>
         </div>
         {/* Menü (Masaüstünde görüntülenir) */}
-        <div className="hidden md:flex space-x-4">
+        <div className="hidden md:flex space-x-4 font-bold">
           <Link to="/" className="hover:text-yellow-500">
             Ana Sayfa
           </Link>
@@ -73,6 +73,7 @@ function App() {
                 <AiOutlineClose size={24} />
               </button>
               {/* Site Başlığı veya Logo */}
+              
               <div className="text-2xl font-extrabold">
                 <span className="text-yellow-500">Filmler</span> ve{' '}
                 <span className="text-blue-500">Karakterler</span>
@@ -81,31 +82,31 @@ function App() {
               <div></div>
             </div>
             {/* Menü Öğeleri */}
-            <nav className="flex flex-col items-center space-y-4 mt-4 px-4">
+            <nav className="flex flex-col items-center space-y-4 mt-4 px-4 font-bold">
               <Link
                 to="/"
-                className="text-xl font-bold hover:text-yellow-500"
+                className="text-xl hover:text-yellow-500"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Ana Sayfa
               </Link>
               <Link
                 to="/films"
-                className="text-xl font-bold hover:text-yellow-500"
+                className="text-xl hover:text-yellow-500"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Filmler
               </Link>
               <Link
                 to="/characters"
-                className="text-xl font-bold hover:text-yellow-500"
+                className="text-xl hover:text-yellow-500"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Karakterler
               </Link>
               <Link
                 to="/second-page"
-                className="text-xl font-bold hover:text-yellow-500"
+                className="text-xl hover:text-yellow-500"
                 onClick={() => setIsMenuOpen(false)}
               >
                 İkinci Sayfa
