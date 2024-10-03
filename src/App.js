@@ -1,191 +1,129 @@
 import React, { useState } from 'react';
-import './tailwind.css';
-import FilmList from './FilmList';
-import { motion } from 'framer-motion'; // For smooth animations
-import Particles from "react-tsparticles"; // For particle background
-import { loadFull } from "tsparticles";
-import axios from 'axios';
-
-function CharacterList({ characters }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="bg-gray-900 p-4 rounded-lg shadow-lg mt-6"
-    >
-      <h2 className="text-2xl font-semibold text-yellow-400 mb-4">Karakterler</h2>
-      <ul>
-        {characters.map((character, index) => (
-          <li key={index} className="text-gray-300 mb-2">
-            {character.name}
-          </li>
-        ))}
-      </ul>
-    </motion.div>
-  );
-}
-
-function FilmDetails({ selectedFilm, characters, onBack }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="container mx-auto px-4 py-8"
-    >
-      <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-semibold mb-4 text-yellow-400">{selectedFilm.title}</h2>
-        <p className="mb-2 text-gray-300"><strong>Açıklama:</strong> {selectedFilm.opening_crawl}</p>
-        <p className="mb-2 text-gray-300"><strong>Yönetmen:</strong> {selectedFilm.director}</p>
-        <p className="mb-2 text-gray-300"><strong>Yapımcı:</strong> {selectedFilm.producer}</p>
-        <p className="mb-2 text-gray-300"><strong>Yayın Tarihi:</strong> {selectedFilm.release_date}</p>
-        <button
-          className="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition duration-300"
-          onClick={onBack}
-        >
-          Geri Dön
-        </button>
-      </div>
-      <CharacterList characters={characters} />
-    </motion.div>
-  );
-}
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import FilmList from './components/FilmList';
+import FilmDetail from './components/FilmDetail';
+import CharacterList from './components/CharacterList';
+import CharacterDetail from './components/CharacterDetail';
+import SecondPage from './components/SecondPage';
+import Home from './components/Home';
+import { FiMenu } from 'react-icons/fi';
+import { AiOutlineArrowLeft, AiOutlineClose } from 'react-icons/ai';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
-  const [selectedFilm, setSelectedFilm] = useState(null);
-  const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(false); // Manage loading state
-  const [currentPage, setCurrentPage] = useState('home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleFilmSelect = async (film) => {
-    setLoading(true); // Start loading when film is selected
-    setSelectedFilm(film);
-    setCurrentPage('details');
-
-    try {
-      const characterPromises = film.characters.map((url) => axios.get(url).then(res => res.data));
-      const fetchedCharacters = await Promise.all(characterPromises);
-      setCharacters(fetchedCharacters); // Set characters correctly
-    } catch (error) {
-      console.error('Karakter verisi alınamadı:', error);
-    } finally {
-      setLoading(false); // Stop loading when characters are fetched
-    }
-  };
-
-  const handleBackToHome = () => {
-    setCurrentPage('home');
-    setSelectedFilm(null);
-    setCharacters([]);
-  };
-
-  const particlesInit = async (main) => {
-    await loadFull(main); // Load full tsparticles engine
+  const handleBack = () => {
+    navigate(-1); // Bir önceki sayfaya gider
   };
 
   return (
-    <div className="relative min-h-screen">
-      {/* Particle Background */}
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={{
-          background: {
-            color: {
-              value: "#000000",
-            },
-          },
-          fpsLimit: 60,
-          particles: {
-            number: {
-              value: 80, // Number of particles
-              density: {
-                enable: true,
-                value_area: 800,
-              },
-            },
-            color: {
-              value: "#ffffff", // White particles
-            },
-            shape: {
-              type: "circle",
-            },
-            opacity: {
-              value: 0.2, // Make particles slightly transparent
-              random: true, // Randomize opacity for different particles
-            },
-            size: {
-              value: 5, // Base size of particles
-              random: true, // Randomize particle size for variety
-            },
-            links: {
-              enable: true, // Show lines between particles
-              distance: 150,
-              color: "#ffffff",
-              opacity: 0.1,
-              width: 1,
-            },
-            move: {
-              enable: true,
-              speed: 1, // Slow particle movement
-              direction: "none",
-              random: true, // Random directions
-              straight: false,
-              outMode: "out", // Let particles leave and re-enter the screen
-            },
-          },
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab", // Particles connect when hovered
-              },
-              onClick: {
-                enable: true,
-                mode: "repulse", // Push particles away when clicked
-              },
-            },
-          },
-          retina_detect: true,
-        }}
-      />
+    <div className="bg-gray-900 min-h-screen text-white">
+      {/* Üst Menü */}
+      <nav className="bg-gray-800 p-4 flex items-center justify-between relative">
+        {/* Sol İkon - Geri Dön */}
+        <div className="md:hidden">
+          <button onClick={handleBack}>
+            <AiOutlineArrowLeft size={24} />
+          </button>
+        </div>
+        {/* Başlık */}
+        <div className="text-3xl font-extrabold flex-grow text-center md:text-left font-sans tracking-wider">
+          <span className="text-yellow-500">Filmler</span> ve{' '}
+          <span className="text-blue-500">Karakterler</span>
+        </div>
+        {/* Menü İkonu */}
+        <div className="md:hidden">
+          <button onClick={() => setIsMenuOpen(true)}>
+            <FiMenu size={24} />
+          </button>
+        </div>
+        {/* Menü (Masaüstünde görüntülenir) */}
+        <div className="hidden md:flex space-x-4">
+          <Link to="/" className="hover:text-yellow-500">
+            Ana Sayfa
+          </Link>
+          <Link to="/films" className="hover:text-yellow-500">
+            Filmler
+          </Link>
+          <Link to="/characters" className="hover:text-yellow-500">
+            Karakterler
+          </Link>
+          <Link to="/second-page" className="hover:text-yellow-500">
+            İkinci Sayfa
+          </Link>
+        </div>
+      </nav>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="min-h-screen relative z-10 bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white"
-      >
-        {/* Loading Spinner */}
-        {loading && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-500"></div>
-          </div>
-        )}
-
-        {/* Home Page */}
-        {currentPage === 'home' && (
+      {/* Mobil Menü */}
+      <AnimatePresence>
+        {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            className="container mx-auto px-4 py-8"
+            className="fixed inset-0 bg-gray-900 z-50"
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ duration: 0.3 }}
           >
-            <div className="text-center">
-              <h1 className="text-3xl font-bold">Filmler ve Karakterler</h1>
+            {/* Menü Başlığı */}
+            <div className="flex items-center justify-between p-4 bg-gray-800">
+              {/* Kapatma Butonu */}
+              <button onClick={() => setIsMenuOpen(false)}>
+                <AiOutlineClose size={24} />
+              </button>
+              {/* Site Başlığı veya Logo */}
+              <div className="text-2xl font-extrabold">
+                <span className="text-yellow-500">Filmler</span> ve{' '}
+                <span className="text-blue-500">Karakterler</span>
+              </div>
+              {/* Arama İkonu Kaldırıldı */}
+              <div></div>
             </div>
-            <div className="mt-8">
-              <FilmList setLoading={setLoading} onSelectFilm={handleFilmSelect} />
-            </div>
+            {/* Menü Öğeleri */}
+            <nav className="flex flex-col items-center space-y-4 mt-4 px-4">
+              <Link
+                to="/"
+                className="text-xl font-bold hover:text-yellow-500"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Ana Sayfa
+              </Link>
+              <Link
+                to="/films"
+                className="text-xl font-bold hover:text-yellow-500"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Filmler
+              </Link>
+              <Link
+                to="/characters"
+                className="text-xl font-bold hover:text-yellow-500"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Karakterler
+              </Link>
+              <Link
+                to="/second-page"
+                className="text-xl font-bold hover:text-yellow-500"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                İkinci Sayfa
+              </Link>
+            </nav>
           </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* Film Details Page */}
-        {currentPage === 'details' && selectedFilm && (
-          <FilmDetails selectedFilm={selectedFilm} characters={characters} onBack={handleBackToHome} />
-        )}
-      </motion.div>
+      {/* Sayfa İçeriği */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/films" element={<FilmList />} />
+        <Route path="/films/:id" element={<FilmDetail />} />
+        <Route path="/characters" element={<CharacterList />} />
+        <Route path="/characters/:id" element={<CharacterDetail />} />
+        <Route path="/second-page" element={<SecondPage />} />
+      </Routes>
     </div>
   );
 }
